@@ -3,37 +3,68 @@ import socket
 import json
 import time
 
-#Configuracion de socker del cliente
-socketClient=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#Configuracion de socket del cliente
+socketClient=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+
 direccionServer=("localhost",5000)
 
-while True: 
-    opciones=input ("Elija una opcion")
-    print ("1: Registar usuario")
-    print ("2: Consultar usuario por cedula")
-    print ("3: Recargar saldo")
+while True:
+    print("\n1. Registrar usuario")
+    print("2. Consultar usuario")
+    print("3. Recargar saldo")
+    print("4. Salir")
 
-    if opciones== "1": 
-        print ("Ingrese el usuario usuario")
+    opcion=input("Ingrese una opcion: ")
+
+    if opcion=="1":
+        cedula=input("Cedula: ")
+        correo=input("Correo: ")
+        telefono=input("Telefono: ")
         nombre=input("Nombre: ")
-        cedula=input("Numero de Cedula: ")
-        correo=input("Correo electronico: ")
-        telefono=input("Numero de telefono: ")
+        saldo=float(input("Saldo: "))
 
-        mensaje = {
-            "opcion": opciones,
-            "nombre":nombre, 
+        mensaje2={
+            "accion":"registrar",
             "cedula":cedula,
             "correo":correo,
-            "telefono":telefono
+            "telefono":telefono,
+            "nombre":nombre,
+            "saldo":saldo
         }
 
-    socketClient.sendto(json.dumps(mensaje).encode(),direccionServer)
-    data, direccion = socketClient.recvfrom(1024)
-    mensaje=data.decode()
-    print(mensaje)
+    elif opcion=="2":
+        cedula=input("Cedula a consultar: ")
 
-if opciones=="2":
-    print()
-    
+        mensaje2={
+            "accion":"consultar",
+            "cedula":cedula
+        }
+
+    elif opcion=="3":
+        cedula=input("Cedula: ")
+        monto=float(input("Monto a recargar: "))
+
+        mensaje2={
+            "accion":"recargar",
+            "cedula":cedula,
+            "monto":monto
+        }
+
+    elif opcion=="4":
+        print("Cliente finalizado")
+        break
+
+    else:
+        print("Opcion no valida")
+        continue
+
+    socketClient.sendto(json.dumps(mensaje2).encode(),direccionServer)
+
+    data, direccion=socketClient.recvfrom(1024)
+    mensaje=json.loads(data.decode())
+
+    print("Respuesta del servidor: ",mensaje)
+    print("/////////////")
+    time.sleep(2)
+
 socketClient.close()

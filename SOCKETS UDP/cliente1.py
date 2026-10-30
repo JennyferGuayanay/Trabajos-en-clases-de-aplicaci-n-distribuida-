@@ -1,3 +1,4 @@
+# Primer y segundo ejercicio de clases  
 import socket
 #Configuracion de socker del cliente
 socketClient=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
